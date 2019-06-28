@@ -69,12 +69,34 @@ public class LocationService extends NotiService {
     AMapLocationListener locationListener = new AMapLocationListener() {
         @Override
         public void onLocationChanged(AMapLocation aMapLocation) {
+
+            //有时候会返回(0，0)点需要排除
+            if (aMapLocation.getLatitude() == 0f || aMapLocation.getLongitude() <= 0.001f) {
+                return;
+            }
+            //计算跟上一个点的距离，当距离不变时或者变化太小时视为同一点，不在inter新的点，而是修改当前点的endTime以及duration。
+            double itemDistance = LocationComputeUtil.getDistance(aMapLocation, lastSaveLocation);
+            if (lastSaveLocation == null && aMapLocation.getLatitude() > 0f) {
+                //record的第一个埋点，插入数据库
+                lastSaveLocation = aMapLocation;
+            } else if (itemDistance > 1.0f) {
+                resetIntervalTimes(0);//新的点
+                lastSaveLocation = aMapLocation;
+            } else {//可能在原地打点，不存入新数据，update endTime。
+                long timestamp = lastSaveLocation.getTime();
+                long endTime = System.currentTimeMillis();//todo 需要考虑定位时间跟系统时间的差值。
+                long duration = endTime - timestamp;
+                resetIntervalTimes(duration);
+            }
+
+
             //发送结果的通知
             sendLocationBroadcast(aMapLocation);
 
             if (!mIsWifiCloseable) {
                 return;
             }
+
 
         }
         };
