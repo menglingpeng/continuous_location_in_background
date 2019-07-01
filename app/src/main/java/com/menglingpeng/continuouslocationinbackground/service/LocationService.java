@@ -6,6 +6,7 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.menglingpeng.continuouslocationinbackground.Util.LocationComputeUtil;
 
 public class LocationService extends NotiService {
 
@@ -100,4 +101,32 @@ public class LocationService extends NotiService {
 
         }
         };
+
+    //LocationService
+
+    private long intervalTime = LocationConstants.DEFAULT_INTERVAL_TIME;
+    private void resetIntervalTimes(long duration) {
+        if (duration >= 60 * 60 * 1000){// 90分钟停止自己的服务, 应该还要关闭守护进程
+            onDestroy();
+            return;
+        }
+        int intervalTimes = LocationComputeUtil.computeIntervalTimes(duration);
+        intervalTime = intervalTimes * LocationConstants.DEFAULT_INTERVAL_TIME;
+        mLocationOption.setInterval(intervalTime);
+        mLocationClient.setLocationOption(mLocationOption);
+    }
+
+
+    public static int computeIntervalTimes(long duration) {
+        long timeMin = 60 * 1000;
+        if (duration > timeMin) {
+            return 2;
+        } else if (duration > 4 * timeMin) {
+            return 3;
+        } else if (duration > 10 * timeMin) {
+            return 5;
+        }
+        return 1;
+    }
+
 }
