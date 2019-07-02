@@ -1,10 +1,8 @@
 package com.menglingpeng.continuouslocationinbackground;
 
-import com.amap.api.location.AMapLocation;
-
 import io.realm.RealmObject;
 
-public class RecordLocation extends RealmObject {
+public class RecordLocation  extends RealmObject{
 
     public long timestamp;//时间戳
     public long endTime;//当前点待了多久，用 endTime - timestamp = duration。
@@ -18,6 +16,10 @@ public class RecordLocation extends RealmObject {
     public int recordType;//运动类型，跑步，骑行，驾驶。
     public String locationStr;//包含AMapLocation的字段
     public double milePost;//里程碑
+
+    public RecordLocation() {
+
+    }
 
     public long getTimestamp() {
         return timestamp;
@@ -115,4 +117,3 @@ public class RecordLocation extends RealmObject {
         this.milePost = milePost;
     }
 }
-
