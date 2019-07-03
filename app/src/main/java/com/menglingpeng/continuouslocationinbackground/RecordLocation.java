@@ -1,5 +1,7 @@
 package com.menglingpeng.continuouslocationinbackground;
 
+import com.amap.api.location.AMapLocation;
+
 import io.realm.RealmObject;
 
 public class RecordLocation  extends RealmObject{
@@ -116,4 +118,41 @@ public class RecordLocation  extends RealmObject{
     public void setMilePost(double milePost) {
         this.milePost = milePost;
     }
+
+    public static RecordLocation copyLocation(RecordLocation originalLocation){
+        RecordLocation recordLocation = new RecordLocation();
+        recordLocation.timestamp = originalLocation.getTimestamp();
+        recordLocation.endTime = originalLocation.getEndTime();
+        recordLocation.duration = originalLocation.getDuration();
+        recordLocation.latitude = originalLocation.getLatitude();
+        recordLocation.longitude = originalLocation.getLongitude();
+        recordLocation.speed = originalLocation.getSpeed();
+        recordLocation.recordId = originalLocation.getRecordId();
+        recordLocation.recordType = originalLocation.getRecordType();
+        recordLocation.itemDistance = originalLocation.getItemDistance();
+        recordLocation.distance = originalLocation.getDistance();
+        recordLocation.locationStr = originalLocation.getLocationStr();
+        recordLocation.milePost=originalLocation.getMilePost();
+        return recordLocation;
+    }
+
+    public static RecordLocation createLocation(AMapLocation location, String recordId,
+                                                int recordType, double itemDistance,
+                                                double distance, String locationStr, double milePost){
+        RecordLocation recordLocation = new RecordLocation();
+        recordLocation.timestamp = location.getTime();
+        recordLocation.endTime = recordLocation.timestamp;
+        recordLocation.duration = 0;
+        recordLocation.latitude = location.getLatitude();
+        recordLocation.longitude = location.getLongitude();
+        recordLocation.speed = location.getSpeed();
+        recordLocation.recordId = recordId;
+        recordLocation.recordType = recordType;
+        recordLocation.itemDistance = itemDistance;
+        recordLocation.distance = distance;
+        recordLocation.locationStr = locationStr;
+        recordLocation.milePost = milePost;
+        return recordLocation;
+    }
+
 }
